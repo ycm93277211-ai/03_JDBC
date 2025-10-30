@@ -108,6 +108,7 @@ public class JDBCTemplate {
 	/** 전달받은 커넥션을 close(자원반환) 하는 메서드
 	 */
 	public static void close(Connection stmt ) {
+		
 		try {
 			if(stmt  != null && !stmt.isClosed())
 				stmt .close();

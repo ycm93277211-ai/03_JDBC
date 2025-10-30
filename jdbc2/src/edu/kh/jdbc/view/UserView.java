@@ -1,8 +1,11 @@
 package edu.kh.jdbc.view;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
+import edu.kh.jdbc.model.dto.User;
 import edu.kh.jdbc.model.service.UserService;
 
 // View : 사용자와 직접 상호작용하는 화면(UI)를 담당,
@@ -37,7 +40,7 @@ public class UserView {
 				sc.nextLine(); // 버퍼에 남은 개행문자 제거
 				switch (input) {
 				case 1: insertUser(); break;
-				case 2: selectAll(); break;
+				case 2: selectAll (); break;
 				case 3: selectName(); break;
 				case 4: selectUser(); break;
 				case 5: deleteUser(); break;
@@ -63,35 +66,146 @@ public class UserView {
 			
 		}while(input != 0 );
 		
+	}
+
+	/** 1. User 등록 관련된 View 
+	 * @throws Exception 
+	 * 
+	 */
+	private void insertUser() throws Exception {
+
+		System.out.println("\n ==== 1. User 등록 ====\n");
+		
+		System.out.print("ID : ");
+		String userId = sc.next();
+		
+		System.out.print("PW : ");
+		String userPw = sc.next();
+		
+		System.out.print("NAME : ");
+		String userName = sc.next();
+		
+		// 입력받은 값 3개를 한번에 묶어서 전달할 수 있도록
+		// User DTO 객체를 생성한 후 필드에 값을 세팅
+		User user = new User();
+		
+		// setter 이용
+		user.setUserId(userId);
+		user.setUserPw(userPw);
+		user.setUserName(userName);
+		
+		// 서비스 호출(INSERT) 후 결과 반환(int,결과 행의 갯수) 받기
+		int result = service.insertUser(user);
+		// service 객체에 있는 insertUser() 라는 이름의 메서드를 호출하겠습니다
+		
+		// 반환된 결과에 따라 출력할 내용 선택
+		if(result > 0) {
+			System.out.println("\n "+ userId +"사용자가 등록되었습니다.\n ");
+		}else {
+			System.out.println("\n**** 등록 실패 ****\n");
+		}
+		
+	}
+
+	/** 2. User 전체 조회 관련 View (select)
+	 * 
+	 */
+	private void selectAll() throws Exception {
+		
+		System.out.println("\n==== 2. User 전체 조회 ====\n");
+		
+		// 서비스 호출(SELECT) 후 결과 반환(List<User>)받기(
+		List<User> userList = service.selectAll();
+		
+		// 조회 결과 없을 경우
+		if(userList.isEmpty()) {
+			System.out.println("\n==== 조회 결과가 없습니다 ====\n");
+			return;
+		}
+		
+		// 조회 결과가 있을 경우
+		// userList에 있는 모든 User 객체 출력
+		// 향상된 for문 이용해서 1개씩 출력
+		
+		for(User user :userList) {
+			System.out.println(user);
+		}
+		
+	}
+
+	/** 3. User 중 이름에 검색어가 포함된 회원 조회(select)
+	 * 검색어 입력 : 
+	 * @throws Exception 
+	 */
+	private void selectName() throws Exception {
+		
+		System.out.println("\n==== User 중 이름에 검색어가 포함된 회원 조회 ====\n");
 		
 		
+		System.out.print("검색어 입력 : ");
+		String keyword = sc.next();
+		
+		// 서비스 호출 후 결과 반환받기
+		List<User> searchList = service.selectName(keyword);
+		
+		if(searchList.isEmpty()) {
+			System.out.println("검색 결과 없음");
+			return;
+		}
+		
+		for(User user : searchList) {
+			System.out.println(user);
+		}
+			
+	}
+
+	/** 4. USER_NO 를 입력받아 일치하는 USER 조회
+	 *  딱 1행만 조회되거나 or 일치하는 것 못찾았거나
+	 *  
+	 *  -- 찾았을 때 : User 객체 출력
+	 *  -- 없을 때 : USER_NO 가 일치하는 회원 없음
+	 */
+	private void selectUser() throws Exception{
+		
+		System.out.println("\n====  USER_NO 를 입력받아 일치하는 USER 조회 ====\n");
+		
+		System.out.print("검색어 입력 : ");
+		int userNo = sc.nextInt();
+		
+		User user = service.selectUser(userNo);
+		
+	    if (user == null) {
+	        System.out.println("USER_NO가 일치하는 회원이 없습니다.");
+	    } else {
+	        System.out.println(user);
+	    }
 		
 		
 		
 	}
 
-	private void insertUser() {
-		// TODO Auto-generated method stub
+	/** 5. USER_NO를 입력받아 일치하는 User 삭제(DELETE)
+	 * DML이다
+	 * 
+	 * -- 삭제 성공했을 때 : 삭제 성공 출력
+	 * -- 삭제 실패했을 때 : 사용자 번호가 일치하는 User가  존재하지 않음
+	 * 
+	 */
+	private void deleteUser() throws Exception{
 		
-	}
-
-	private void selectAll() {
-		// TODO Auto-generated method stub
+	System.out.println("\n====  USER_NO 를 입력받아 일치하는 User 삭제 ====\n");
 		
-	}
-
-	private void selectName() {
-		// TODO Auto-generated method stub
+		System.out.print("검색어 입력 : ");
+		int userNo = sc.nextInt();
 		
-	}
-
-	private void selectUser() {
-		// TODO Auto-generated method stub
+		int user = service.deleteUser(userNo);
 		
-	}
-
-	private void deleteUser() {
-		// TODO Auto-generated method stub
+	    if (user == 0) {
+	        System.out.println("USER_NO가 일치하는 회원이 없습니다.");
+	    } else {
+	        System.out.println(userNo +"행 삭제 성공");
+	    }
+		
 		
 	}
 
