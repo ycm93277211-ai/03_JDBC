@@ -76,65 +76,63 @@ public class JDBCExample1 {
 
 			// Connection 객체가 잘 생성되었는지 확인
 			System.out.println(conn); // oracle.jdbc.driver.T4CConnection@1fe20588
-			
+
 			// 3. SQl 작성
 			// 주의사항!
-			//-> JDBC 코드에서 SQL 작성시
+			// -> JDBC 코드에서 SQL 작성시
 			// 세미콜론 작성하면 안된다!
-			
+
 			// EMPLOYEE 테이블에서
 			// 사번, 이름, 부서코드, 직급코드, 급여, 입사일 조회
-			String sql = "SELECT EMP_ID, EMP_NAME, DEPT_CODE, "
-						+ "JOB_CODE, SALARY, HIRE_DATE FROM EMPLOYEE ";
-		
+			String sql = "SELECT EMP_ID, EMP_NAME, DEPT_CODE, " + "JOB_CODE, SALARY, HIRE_DATE FROM EMPLOYEE ";
+
 			// 4. Statement 객체 생성
 			stmt = conn.createStatement();
 			// 연결된 DB에 SQL을 전달하고
 			// 결과를 반환 받을 역할을 함
-			
+
 			// 5. Statement 객체를 이용해서 SQL 수행 후 결과를 반환 받기
-			
+
 			// 1) ResultSet Statement.executeQuery(sql)
 			// -> sql이 SELECT 문일 때 결과로 ResultSet 객체 반환
-			
+
 			// 2) int Statement.executeUpdate(sql)
 			// -> sql이 DML (INSERT/UPDATE/DELETE)일 때 실행 메서드
 			// -> 결과로 INT 반환 (삽입,수정,삭제된 행의 갯수)
-			
-			 rs = stmt.executeQuery(sql);
-			 
-			// 6. 조회 결과가 담겨있는 rs를 
+
+			rs = stmt.executeQuery(sql);
+
+			// 6. 조회 결과가 담겨있는 rs를
 			// 커서(cursor)를 이용해서
-			// 1행 씩 접근해 각 행에 작성된 컬럼값 얻어오기  
-			 
-			 // boolean ResultSet.next() 
-			 // 커서를 다음 행으로 이동 시킨 후
-			 // 이동된 행에 값이 있으면 true,없으면 false 반환
-			 // 맨 처음 호출 시 1행 부터 시작
-			 
-			 while(rs.next()) {
-				 // 자료형 ResultSet.get자료형(컬럼명 | 순서);
-				 // - 현재 행에서 지정된 컬럼의 값을 얻어와 반환
-				 // -> 지정된 자료형 형태로 값이 반환됨
-				 // (자료형을 잘못 지정하면 예외 발생)
-				 
-				 //[java]              [DB]
-				 //String           CHAR,VARCHAR2,NVARCHAR2
-				 //int,long   		NUMBER(정수 저장된 컬럼)
-				 //float,double     NUMBER(정수 + 실수)
-				 
-				 String empId = rs.getString("EMP_ID"); // "200"
-				 String empName = rs.getString("EMP_NAME"); // "성동일"
-				 String dept_Code = rs.getString("DEPT_CODE"); // "D9"
-				 String job_Code = rs.getString("JOB_CODE"); // "J1"
-				 int 	salary = rs.getInt("SALARY"); // "8,000,000"
-				 Date hire_Date = rs.getDate("HIRE_DATE"); // "1990-02-06"
-				 
-				 System.err.printf("사번: %s / 이름: %s / 부서코드 %s / 직급코드: %s"
-				 		+ "급여: %d / 입사일: %s\n"
-						 ,empId,empName,dept_Code,job_Code,salary,hire_Date );
-			 }
-			 
+			// 1행 씩 접근해 각 행에 작성된 컬럼값 얻어오기
+
+			// boolean ResultSet.next()
+			// 커서를 다음 행으로 이동 시킨 후
+			// 이동된 행에 값이 있으면 true,없으면 false 반환
+			// 맨 처음 호출 시 1행 부터 시작
+
+			while (rs.next()) {
+				// 자료형 ResultSet.get자료형(컬럼명 | 순서);
+				// - 현재 행에서 지정된 컬럼의 값을 얻어와 반환
+				// -> 지정된 자료형 형태로 값이 반환됨
+				// (자료형을 잘못 지정하면 예외 발생)
+
+				// [java] [DB]
+				// String CHAR,VARCHAR2,NVARCHAR2
+				// int,long NUMBER(정수 저장된 컬럼)
+				// float,double NUMBER(정수 + 실수)
+
+				String empId = rs.getString("EMP_ID"); // "200"
+				String empName = rs.getString("EMP_NAME"); // "성동일"
+				String dept_Code = rs.getString("DEPT_CODE"); // "D9"
+				String job_Code = rs.getString("JOB_CODE"); // "J1"
+				int salary = rs.getInt("SALARY"); // "8,000,000"
+				Date hire_Date = rs.getDate("HIRE_DATE"); // "1990-02-06"
+
+				System.err.printf("사번: %s / 이름: %s / 부서코드 %s / 직급코드: %s" + "급여: %d / 입사일: %s\n", empId, empName,
+						dept_Code, job_Code, salary, hire_Date);
+			}
+
 		} catch (ClassNotFoundException e) {
 			System.out.println("해당 클래스를 찾을 수 없음");
 			e.printStackTrace();
@@ -148,20 +146,21 @@ public class JDBCExample1 {
 			// 다른 클라이언트(ex. Java프로그램)가
 			// 추가적으러 연결되지 못하는 문제 발생할 수 있음!
 			// -> DBMS는 최대 Connection 수 개수 제한을 하고 있기 때문에
-			
+
 			try {
 				// 만들어진 역순으로 close 수행하는 것을 권장!!
-				if(rs != null)rs.close();
-				if(stmt != null)stmt.close();
-				if(conn != null)conn.close();
+				if (rs != null)
+					rs.close();
+				if (stmt != null)
+					stmt.close();
+				if (conn != null)
+					conn.close();
 			} catch (SQLException e) {
-				
+
 				e.printStackTrace();
 			}
-			
+
 		}
-		
-		
 
 	}
 

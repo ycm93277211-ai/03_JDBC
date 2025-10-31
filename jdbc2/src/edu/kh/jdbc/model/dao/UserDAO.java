@@ -73,9 +73,6 @@ public class UserDAO {
 	 * @return : List<User> userList
 	 * @throws Exception
 	 */
-	// 실제로 DB에 접근해서 SQL을 실행하고, 결과를 자바 객체(User)로 변환해서 반환하는 역할입니다.
-	// SQL 구문 작성, PreparedStatement 생성, 실행, ResultSet 순회, 자원 반환(닫기) 등이 여기 들어갑니다.
-
 	public List<User> selectAll(Connection conn) throws Exception {
 
 		// 1. 결과 저장용 변수 선언
@@ -183,7 +180,7 @@ public class UserDAO {
 	}
 
 	/**
-	 * 4.
+	 * 4. USER_NO를 입력받아 일치하는 USER 조회 DAO
 	 * 
 	 * @param conn
 	 * @param userNo
@@ -201,7 +198,6 @@ public class UserDAO {
 					TO_CHAR(ENROLL_DATE,'YYYY"년"MM"월"DD"일"') ENROLL_DATE
 					FROM TB_USER
 					WHERE USER_NO  = ?
-					ORDER BY USER_NO
 					""";
 
 			// 3. PrepardStatement 객체 생성
@@ -225,7 +221,7 @@ public class UserDAO {
 				// 변환해 조회해왔기 때문.
 
 				// User 객체 새로 생성하여 DB에서 얻어온 컬럼값 필드로 세팅
-				user = new User(userNo, userId, userPw, userName, enrollDate);
+				user = new User(userNo1, userId, userPw, userName, enrollDate);
 
 			}
 
@@ -238,7 +234,8 @@ public class UserDAO {
 	}
 
 	/**
-	 * 5
+	 * 5. USER_NO를 입력 받아 일치하는 USER 삭제
+	 * 
 	 * 
 	 * @param conn
 	 * @param userNo
@@ -263,12 +260,138 @@ public class UserDAO {
 
 			// 5. SQL(INSERT) 수행 후(executeUpdate()) 결과(삽입된 행의 갯수) 반환 받기
 			user = pstmt.executeUpdate();
-			
+
 		} finally {
 			close(pstmt);
 		}
 
 		return user;
 	}
+
+	/**
+	 * 6-1. ID, PW가 일치하는 회원이 있는지 조회 DAO
+	 * 
+	 * @param conn
+	 * @param userId
+	 * @param userPw
+	 * @return
+	 */
+	public int selectUserNo(Connection conn, String userId, String userPw) throws Exception {
+
+		int userNo = 0;
+
+		try {
+			String sql = """
+					SELECT USER_NO
+					FROM TB_USER
+					WHERE USER_ID =? AND USER_PW =?
+					""";
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, userId);
+			pstmt.setString(2, userPw);
+
+			rs = pstmt.executeQuery();
+
+			// 조회된 행이 1개가 있을 경우
+			if (rs.next()) {
+				userNo = rs.getInt("USER_NO");
+			}
+
+		} finally {
+			close(rs);
+			close(pstmt);
+		}
+
+		return userNo; // 조회 성공 USER_NO,실패 0 반환
+
+	}
+
+	/** 
+	 *  6-2 USER_NO가 일치하는 회원의 이름 수정 DAO
+	 * @param conn
+	 * @param name
+	 * @param userNo
+	 * @return
+	 */
+	public int updateNanm(Connection conn, String name, int userNo) throws Exception {
+
+		int result = 0;
+
+		try {
+			String sql = """
+					UPDATE TB_USER
+					SET USER_NAME = ?
+					WHERE USER_NO = ?
+					""";
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, name);
+			pstmt.setInt(2, userNo);
+
+			result = pstmt.executeUpdate();
+
+		} finally {
+			close(pstmt);
+		}
+
+		return result;
+	}
+
+	/**
+	 * 7 . 아이디 중복검사 DAO
+	 * @param conn
+	 * @param userId
+	 * @return
+	 */
+	public int idCheck(Connection conn, String userId) throws Exception  {
+
+		int count = 0;
+		
+		try {
+			String sql = """
+					SELECT COUNT(*)
+					FROM TB_USER
+					WHERE USER_ID = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				count = rs.getInt("COUNT(*)"); // 조회된 컬럼 순서번호를 이용해 컬럼값 얻어오기 가능
+				
+				
+			}
+		}finally {
+			close(rs);
+			close(pstmt);
+		}
+		
+		return count;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
