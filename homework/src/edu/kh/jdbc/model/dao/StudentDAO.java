@@ -76,6 +76,7 @@ public class StudentDAO {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
+
 				int stdNo = rs.getInt("STD_NO");
 				String stdName = rs.getString("STD_NAME");
 				int stdAge = rs.getInt("STD_AGE");
@@ -132,4 +133,81 @@ public class StudentDAO {
 		return result;
 	}
 
+	/**
+	 * 4. 학생 정보 삭제
+	 * 
+	 * @param conn
+	 * @param result
+	 * @return
+	 * @throws Exception
+	 */
+	public int updateStudent(Connection conn, int result) throws Exception {
+
+		int student = 0;
+
+		try {
+			String sql = """
+					DELETE FROM KH_STUDENT
+					WHERE STD_NO = ?
+					""";
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, result);
+
+			student = pstmt.executeUpdate();
+
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+
+		return student;
+	}
+
+	/**
+	 * 5. 특정정공조회
+	 * 
+	 * @param conn
+	 * @param stdMajor
+	 * @return
+	 */
+	public List<Student> majorSelect(Connection conn, String stdMajor) throws Exception {
+
+		List<Student> studentList = new ArrayList<>();
+
+		try {
+
+			String sql = """
+					SELECT  STD_NO, STD_NAME, STD_AGE, MAJOR, ENT_DATE
+					FROM KH_STUDENT
+					WHERE MAJOR = ?
+					""";
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, stdMajor);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+
+				int stdNo = rs.getInt("STD_NO");
+				String stdName = rs.getString("STD_NAME");
+				int stdAge = rs.getInt("STD_AGE");
+				String Major = rs.getString("MAJOR");
+				String entDate = rs.getString("ENT_DATE");
+
+				Student student = new Student(stdNo, stdName, stdAge, Major, entDate);
+
+				studentList.add(student);
+
+			}
+
+		} finally {
+			JDBCTemplate.close(rs);
+			JDBCTemplate.close(pstmt);
+		}
+
+		return studentList;
+	}
 }

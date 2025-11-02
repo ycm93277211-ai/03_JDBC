@@ -75,4 +75,48 @@ public class StudentService {
 		return result;
 	}
 
+	/**
+	 * 4 . 학생 정보 삭제
+	 * @param result
+	 * @return
+	 */
+	public int deleteStudent(int result) throws Exception  {
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int student = dao.updateStudent(conn, result);
+		
+		if (student > 0) {// INSERT 성공
+			JDBCTemplate.commit(conn);
+
+		} else {// 실패
+			JDBCTemplate.rollback(conn);
+		}
+		
+		
+		
+		
+		return  student ;
+	}
+
+	/** 5. 특정 전공 조회
+	 * 
+	 * @param stdMajor
+	 * @return
+	 */
+	public List<Student> majorSelect(String stdMajor) throws Exception {
+		
+		Connection conn = JDBCTemplate.getConnection();
+
+		List<Student> studntList = dao. majorSelect(conn,stdMajor);
+
+		JDBCTemplate.close(conn);
+
+		return studntList;
+	}
+
+
+
+
+
 }

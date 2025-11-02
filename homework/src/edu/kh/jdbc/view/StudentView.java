@@ -156,8 +156,21 @@ public class StudentView {
 	 * 4. 학번 기준 삭제 (DELETE)
 	 * 
 	 */
-	private void deleteStudent() {
-		// TODO Auto-generated method stub
+	private void deleteStudent() throws Exception {
+		
+		System.out.println("\n====삭제 할 학생번호를 입력해주세요====\n");
+		
+		System.out.println("삭제 할 학생번호를 입력: ");
+		int result = sc.nextInt();
+		
+		int student = service.deleteStudent(result);
+		
+		if(student>0) {
+			System.out.println("삭제 성공");
+		}else {
+			System.out.println("삭제 실패");
+		}
+		
 
 	}
 
@@ -165,9 +178,21 @@ public class StudentView {
 	 * 5. 특정 전공 학생만 필터링 조회 (SELECT)
 	 * 
 	 */
-	private void majorSelect() {
-		// TODO Auto-generated method stub
+	private void majorSelect()  throws Exception {
+
+		System.out.println("\n====특정 전공 학생 조회====\n");
+		
+		System.out.print("MAJOR: ");
+		String stdMajor = sc.next();
+		
+		List<Student> studentList = new ArrayList<>();
+
+		studentList = service.majorSelect(stdMajor);
+
+		for (Student std : studentList) {
+
+			System.out.println(std);
+		}
 
 	}
-
 }
