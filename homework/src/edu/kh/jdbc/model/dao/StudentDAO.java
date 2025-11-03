@@ -165,7 +165,7 @@ public class StudentDAO {
 	}
 
 	/**
-	 * 5. 특정정공조회
+	 * 5. 특정 전공 조회
 	 * 
 	 * @param conn
 	 * @param stdMajor
