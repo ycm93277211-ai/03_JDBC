@@ -35,7 +35,7 @@ public class JDBCTemplate {
 			// 2. Properties 가 제공하는 메서드를 이용해서 driver.xml 파일 내용을 읽어오기
 			prop.loadFromXML(new FileInputStream("driver.xml"));
 
-			// 3. prop에 저장된 값을 이용새서 Connection 객체 생성
+			// 3. prop에 저장된 값을 이용해서 Connection 객체 생성
 			Class.forName(prop.getProperty("driver"));
 
 			conn = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("userName"),

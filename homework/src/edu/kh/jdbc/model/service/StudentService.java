@@ -108,11 +108,11 @@ public class StudentService {
 		
 		Connection conn = JDBCTemplate.getConnection();
 
-		List<Student> studntList = dao. majorSelect(conn,stdMajor);
+		List<Student> studentList = dao. majorSelect(conn,stdMajor);
 
 		JDBCTemplate.close(conn);
 
-		return studntList;
+		return studentList;
 	}
 
 

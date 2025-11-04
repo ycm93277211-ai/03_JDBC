@@ -69,6 +69,7 @@ public class StudentDAO {
 
 			String sql = """
 					SELECT  * FROM KH_STUDENT
+					ORDER BY STD_NO
 					""";
 
 			pstmt = conn.prepareStatement(sql);
